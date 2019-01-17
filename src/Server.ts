@@ -2,6 +2,8 @@ import { GlobalAcceptMimesMiddleware, ServerLoader, ServerSettings } from '@tsed
 import '@tsed/mongoose';
 import '@tsed/swagger';
 
+require('dotenv').config();
+
 import './modules/auth/AuthMiddleware';
 import GlobalErrorHandlerMiddleware from './modules/auth/ErrorMiddleware';
 
@@ -14,7 +16,7 @@ import GlobalErrorHandlerMiddleware from './modules/auth/ErrorMiddleware';
     '/v1': `${__dirname}/modules/**/**Controller.js`
   },
   mongoose: {
-    url: process.env.MONGOOSE_URL || 'mongodb://127.0.0.1:27017/getfood-api-dev'
+    url: process.env.MONGOOSE_URL || 'mongodb://127.0.0.1:27017/getfood-api-prod'
   },
   swagger: {
     path: '/api-docs',

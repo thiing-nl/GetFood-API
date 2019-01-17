@@ -57,3 +57,6 @@ test/**/*.js.map
 
 # Project
 public
+
+# Env
+.env
