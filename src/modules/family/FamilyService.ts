@@ -150,7 +150,7 @@ export class FamilyService {
    * Get a family by id
    * @param user
    */
-  public async generateQrcode(user: User) {
+  public async generateQrcode(user: User): Promise<string> {
     await this.hasFamily(user, true);
 
     const family = await this.familyModel
