@@ -84,6 +84,7 @@ export class ListService {
     await newList.save();
 
     const jsonList = newList.toJSON();
+    jsonList.createdBy = user.toJSON() as User;
     jsonList.family = await this.familyService.get(newList.family._id);
 
     return jsonList;
