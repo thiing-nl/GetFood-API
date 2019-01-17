@@ -1,5 +1,5 @@
 import { Authenticated, BodyParams, Controller, Delete, Get, PathParams, Post, Put, Req } from '@tsed/common';
-import { Returns, Security, Summary } from '@tsed/swagger';
+import { Docs, Returns, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../auth/AuthMiddleware';
 import { Family } from '../family/Family';
 import { FamilyCreateUpdate } from '../family/models/FamilyCreateUpdate';
@@ -8,6 +8,7 @@ import { ListItemController } from './list-item/ListItemController';
 import { ListService } from './ListService';
 import { ListCreateUpdate } from './models/ListCreateUpdate';
 
+@Docs('api-v1')
 @Controller('/list', ListItemController)
 export class ListController {
 

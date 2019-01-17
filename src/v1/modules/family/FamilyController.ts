@@ -1,12 +1,12 @@
 import { Authenticated, BodyParams, Controller, Delete, Get, PathParams, Post, Put, Req } from '@tsed/common';
-import { Returns, Security, Summary } from '@tsed/swagger';
+import { Docs, Returns, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../auth/AuthMiddleware';
 import { List } from '../list/List';
 import { Family } from './Family';
 import { FamilyService } from './FamilyService';
 import { FamilyCreateUpdate } from './models/FamilyCreateUpdate';
 
-
+@Docs('api-v1')
 @Controller('/family')
 export class FamilyController {
 

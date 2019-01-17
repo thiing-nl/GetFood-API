@@ -10,13 +10,13 @@ import {
   Req,
   UseBefore
 } from '@tsed/common';
-import { Returns, Security, Summary } from '@tsed/swagger';
+import { Docs, Returns, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../../auth/AuthMiddleware';
 import { CheckListIdMiddleware } from '../CheckListIdMiddleware';
 import { ListItem, ListItemCreateUpdate } from './ListItem';
 import { ListItemService } from './ListItemService';
 
-
+@Docs('api-v1')
 @Controller('/:listId/items')
 @MergeParams(true)
 export class ListItemController {

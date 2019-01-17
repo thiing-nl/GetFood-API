@@ -1,5 +1,5 @@
 import { Authenticated, BodyParams, Controller, Get, Post, Property, Req, Required } from '@tsed/common';
-import { Example, Security, Summary } from '@tsed/swagger';
+import { Docs, Example, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../AuthMiddleware';
 import { User } from './User';
 import { UserCreateModel } from './UserCreateModel';
@@ -17,7 +17,7 @@ class UserAuthenticationRequest {
   password: string;
 }
 
-
+@Docs('api-v1')
 @Controller('/user')
 export class UserController {
   constructor(

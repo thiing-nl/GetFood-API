@@ -1,11 +1,10 @@
 import { GlobalAcceptMimesMiddleware, ServerLoader, ServerSettings } from '@tsed/common';
 import '@tsed/mongoose';
 import '@tsed/swagger';
+import './v1/modules/auth/AuthMiddleware';
+import GlobalErrorHandlerMiddleware from './v1/modules/auth/ErrorMiddleware';
 
 require('dotenv').config();
-
-import './modules/auth/AuthMiddleware';
-import GlobalErrorHandlerMiddleware from './modules/auth/ErrorMiddleware';
 
 
 @ServerSettings({
@@ -13,24 +12,28 @@ import GlobalErrorHandlerMiddleware from './modules/auth/ErrorMiddleware';
   acceptMimes: [ 'application/json' ],
   passport: {},
   mount: {
-    '/v1': `${__dirname}/modules/**/**Controller.js`
+    '/v1': `${__dirname}/v1/modules/**/**Controller.js`,
+    '/': `${__dirname}/core/**/**Controller.js`
   },
   mongoose: {
     url: process.env.MONGOOSE_URL || 'mongodb://127.0.0.1:27017/getfood-api-prod'
   },
-  swagger: {
-    path: '/api-docs',
-    spec: {
-      info: {},
-      securityDefinitions: {
-        'token': {
-          'type': 'apiKey',
-          'name': 'X-User-Token',
-          'in': 'header'
+  swagger: [
+    {
+      path: '/api-docs',
+      doc: 'api-v1',
+      spec: {
+        info: {},
+        securityDefinitions: {
+          'token': {
+            'type': 'apiKey',
+            'name': 'X-User-Token',
+            'in': 'header'
+          }
         }
       }
     }
-  },
+  ],
   debug: false
 })
 export class Server extends ServerLoader {
