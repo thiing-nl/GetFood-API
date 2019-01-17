@@ -5,10 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "clean": "rimraf '{src,test}/**/*.{js,js.map}'",
-    "build": "npm run tsc",
-    "postinstall": "npm run build",
+    "build": "yarn tsc",
+    "postinstall": "yarn build",
     "tslint": "tslint ./*.ts ./lib/*.ts",
-    "test": "npm run clean && npm run tsc && npm run tslint && npm run nyc",
+    "test": "yarn clean && yarn tsc && yarn tslint && yarn nyc",
     "nyc": "NODE_ENV=test nyc --reporter=html --reporter=text _mocha \"{src,test}/**/*.spec.js\" --recursive",
     "coveralls:travis": "nyc report --reporter=text-lcov | coveralls",
     "tsc": "tsc --project tsconfig.json",
