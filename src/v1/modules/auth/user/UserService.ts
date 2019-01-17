@@ -80,7 +80,10 @@ export class UserService {
       user.token = User.generateToken();
       await user.save();
 
-      return user.toJSON();
+      return {
+        ...user.toJSON(),
+        token: user.token
+      };
     } else {
       throw new Forbidden('Username and/or Password is incorrect.');
     }
