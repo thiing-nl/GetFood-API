@@ -1,5 +1,6 @@
 import { Authenticated, BodyParams, Controller, Get, Post, Property, Req, Required } from '@tsed/common';
-import { Docs, Example, Security, Summary } from '@tsed/swagger';
+import { Docs, Example, Returns, Security, Summary } from '@tsed/swagger';
+import { Family } from '../../family/Family';
 import { UserRequest } from '../AuthMiddleware';
 import { User } from './User';
 import { UserCreateModel } from './UserCreateModel';
@@ -26,6 +27,7 @@ export class UserController {
   }
 
   @Post('/')
+  @Returns(200, { type: User })
   @Summary('Registers a new user')
   public async register(
     @BodyParams() user: UserCreateModel
@@ -34,6 +36,7 @@ export class UserController {
   }
 
   @Get('/')
+  @Returns(200, { type: User })
   @Summary('Get current user')
   @Authenticated()
   @Security('token')
@@ -44,6 +47,7 @@ export class UserController {
   }
 
   @Post('/auth')
+  @Returns(200, { type: User })
   @Summary('Authenticates a user')
   public async authenticate(
     @BodyParams() userAuthenticationRequest: UserAuthenticationRequest
