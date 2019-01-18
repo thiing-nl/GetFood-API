@@ -55,7 +55,7 @@ export class UserService {
    */
   public async create(createUser: UserCreateUpdateModel): Promise<User> {
     if ( !_.isNil(await this.findByEmail(createUser.email)) ) {
-      throw new BadRequest('User with this username already exists.');
+      throw new BadRequest('User with this email already exists.');
     }
 
     const user = new this.userModel();
@@ -76,7 +76,7 @@ export class UserService {
     const user = await this.findByEmail(email);
 
     if ( _.isNull(user) ) {
-      throw new Forbidden('Username and/or Password is incorrect.');
+      throw new Forbidden('Email and/or Password is incorrect.');
     }
 
     if ( user.verifyPasswordSync(password) ) {
@@ -88,7 +88,7 @@ export class UserService {
         token: user.token
       };
     } else {
-      throw new Forbidden('Username and/or Password is incorrect.');
+      throw new Forbidden('Email and/or Password is incorrect.');
     }
   }
 
