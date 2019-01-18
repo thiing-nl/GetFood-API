@@ -66,7 +66,7 @@ export class UserService {
     user.token = User.generateToken();
     await user.save();
 
-    return user.toJSON();
+    return user;
   }
 
   public async authenticate({ email, password }) {

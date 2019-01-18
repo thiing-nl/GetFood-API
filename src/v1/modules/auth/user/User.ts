@@ -1,11 +1,10 @@
-import { IgnoreProperty, Property, Required } from '@tsed/common';
-import { Model, MongoosePlugin, PreHook, Ref } from '@tsed/mongoose';
+import { Property, Required } from '@tsed/common';
+import { Model, MongoosePlugin, PreHook } from '@tsed/mongoose';
 import { Example } from '@tsed/swagger';
 import * as _ from 'lodash';
-import * as uuid from 'uuid';
-import { Family } from '../../family/Family';
-import * as uniqueValidator from 'mongoose-unique-validator';
 import * as passwordPlugin from 'mongoose-bcrypt';
+import * as uniqueValidator from 'mongoose-unique-validator';
+import * as uuid from 'uuid';
 
 @Model()
 @MongoosePlugin(uniqueValidator, undefined)
@@ -69,19 +68,6 @@ export class User {
   }
 
   /**
-   * @returns {any}
-   */
-  public toJSON() {
-    return {
-      _id: this._id,
-      initials: this.initials,
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.email
-    };
-  }
-
-  /**
    * Generate Initials based on first name and last name
    * @param {string} firstName
    * @param {string} lastName
@@ -92,13 +78,31 @@ export class User {
     lastName: string
   ): string {
     const splitFirstName = firstName.split(' ')
-      .map((firstNameItem) => firstNameItem.toUpperCase()[0]);
-    const splitLastName = lastName.split(' ')
-      .map((lastNameItem) => lastNameItem.toUpperCase()[0]);
+      .map((firstNameItem) => firstNameItem.toUpperCase()[ 0 ]);
+    let splitLastName = lastName.split(' ')
+      .reverse();
+
+    if ( splitLastName.length > 0 ) {
+      splitLastName.length = 1;
+      splitLastName = splitLastName.map((lastNameItem) => lastNameItem.toUpperCase()[ 0 ]);
+    }
 
     return [
       ...splitFirstName,
       ...splitLastName
     ].join('');
+  }
+
+  /**
+   * @returns {any}
+   */
+  public toJSON() {
+    return {
+      _id: this._id,
+      initials: this.initials,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email
+    };
   }
 }
