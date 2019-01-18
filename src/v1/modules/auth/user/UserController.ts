@@ -1,9 +1,9 @@
-import { Authenticated, BodyParams, Controller, Get, Post, Property, Req, Required } from '@tsed/common';
+import { Authenticated, BodyParams, Controller, Delete, Get, Post, Property, Put, Req, Required } from '@tsed/common';
 import { Docs, Example, Returns, Security, Summary } from '@tsed/swagger';
 import { Family } from '../../family/Family';
 import { UserRequest } from '../AuthMiddleware';
 import { User } from './User';
-import { UserCreateModel } from './UserCreateModel';
+import { UserCreateUpdateModel } from './UserCreateUpdateModel';
 import { UserService } from './UserService';
 
 class UserAuthenticationRequest {
@@ -30,9 +30,18 @@ export class UserController {
   @Returns(200, { type: User })
   @Summary('Registers a new user')
   public async register(
-    @BodyParams() user: UserCreateModel
+    @BodyParams() user: UserCreateUpdateModel
   ) {
     return await this.userService.create(user);
+  }
+
+  @Post('/auth')
+  @Returns(200, { type: User })
+  @Summary('Authenticates a user')
+  public async authenticate(
+    @BodyParams() userAuthenticationRequest: UserAuthenticationRequest
+  ) {
+    return await this.userService.authenticate(userAuthenticationRequest);
   }
 
   @Get('/')
@@ -46,12 +55,27 @@ export class UserController {
     return await this.userService.get(req.user._id);
   }
 
-  @Post('/auth')
+  @Put('/')
   @Returns(200, { type: User })
-  @Summary('Authenticates a user')
-  public async authenticate(
-    @BodyParams() userAuthenticationRequest: UserAuthenticationRequest
+  @Summary('Update current user')
+  @Authenticated()
+  @Security('token')
+  public async update(
+    @BodyParams() userCreateUpdateModel: UserCreateUpdateModel,
+    @Req() req: UserRequest
   ) {
-    return await this.userService.authenticate(userAuthenticationRequest);
+    return await this.userService.update(userCreateUpdateModel, req.user);
   }
+
+  @Delete('/')
+  @Returns(200, { type: User })
+  @Summary('Delete current user')
+  @Authenticated()
+  @Security('token')
+  public async delete(
+    @Req() req: UserRequest
+  ) {
+    return await this.userService.delete(req.user);
+  }
+
 }

@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Document } from 'mongoose';
 import { BadRequest, Forbidden, NotFound } from 'ts-httpexceptions';
 import { User } from './User';
-import { UserCreateModel } from './UserCreateModel';
+import { UserCreateUpdateModel } from './UserCreateUpdateModel';
 import { IUser } from './UserInterface';
 
 @Service()
@@ -53,7 +53,7 @@ export class UserService {
    * Create User
    * @param createUser
    */
-  public async create(createUser: UserCreateModel) {
+  public async create(createUser: UserCreateUpdateModel) {
     if ( !_.isNil(await this.findByEmail(createUser.email)) ) {
       throw new BadRequest('User with this username already exists.');
     }
@@ -91,5 +91,36 @@ export class UserService {
 
   public static findByToken(userTokenHeader: string) {
     return UserService.staticUserModel.findOne({ token: userTokenHeader });
+  }
+
+  public async update(
+    userCreateUpdateModel: UserCreateUpdateModel,
+    user: User
+  ) {
+    const currentUser: IUser & Document = await this.userModel.findOne({ _id: user._id });
+
+    if (_.isNil(currentUser)) {
+      throw new NotFound('Cannot get user.');
+    }
+
+    currentUser.firstName = userCreateUpdateModel.firstName;
+    currentUser.lastName = userCreateUpdateModel.lastName;
+    currentUser.password = userCreateUpdateModel.password;
+    currentUser.email = userCreateUpdateModel.email;
+    await currentUser.save();
+
+    return currentUser.toJSON();
+  }
+
+  public async delete(user: User) {
+    const currentUser: IUser & Document = await this.userModel.findOne({ _id: user._id });
+
+    if (_.isNil(currentUser)) {
+      throw new NotFound('Cannot get user.');
+    }
+
+    await currentUser.remove();
+
+    return currentUser.toJSON();
   }
 }

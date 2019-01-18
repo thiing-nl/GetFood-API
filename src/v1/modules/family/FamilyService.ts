@@ -228,7 +228,7 @@ export class FamilyService {
     });
 
     let createdBy;
-    if ( !_.isNil(family.createdBy[ 'toJSON' ]) ) {
+    if ( !_.isNil(family.createdBy) && !_.isNil(family.createdBy[ 'toJSON' ]) ) {
        createdBy = (family.createdBy as User).toJSON();
     }
 
