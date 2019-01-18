@@ -1,11 +1,10 @@
 import { Authenticated, BodyParams, Controller, Delete, Get, PathParams, Post, Put, Req } from '@tsed/common';
-import { Docs, Returns, Security, Summary } from '@tsed/swagger';
+import { Docs, Returns, ReturnsArray, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../auth/AuthMiddleware';
-import { Family } from '../family/Family';
-import { FamilyCreateUpdate } from '../family/models/FamilyCreateUpdate';
 import { List } from './List';
 import { ListItemController } from './list-item/ListItemController';
 import { ListService } from './ListService';
+import { LIST_COLORS, ListColor } from './models/ListColors';
 import { ListCreateUpdate } from './models/ListCreateUpdate';
 
 @Docs('api-v1')
@@ -29,6 +28,28 @@ export class ListController {
     return await this.listService.create(list, req.user);
   }
 
+  @Get('/')
+  @Summary('Receives the lists the current user has access to')
+  @ReturnsArray(200, { type: List })
+  @Authenticated()
+  @Security('token')
+  public async getLists(
+    @Req() req: UserRequest
+  ): Promise<List[]> {
+    return await this.listService.getAllListsForUser(req.user);
+  }
+
+  @Get('/colors')
+  @Summary('Receives the available colors for the list')
+  @ReturnsArray(200, { type: ListColor })
+  @Authenticated()
+  @Security('token')
+  public async getColors(
+    @Req() req: UserRequest
+  ): Promise<ListColor[]> {
+    return LIST_COLORS;
+  }
+
   @Get('/:listId')
   @Summary('Get a list')
   @Returns(200, { type: List })
@@ -39,17 +60,6 @@ export class ListController {
     @Req() req: UserRequest
   ): Promise<List> {
     return await this.listService.get(listId, req.user);
-  }
-
-  @Get('/')
-  @Summary('Receives the lists the current user has access to')
-  @Returns(200, { type: Family })
-  @Authenticated()
-  @Security('token')
-  public async getLists(
-    @Req() req: UserRequest
-  ): Promise<List[]> {
-    return await this.listService.getAllListsForUser(req.user);
   }
 
   @Put('/:listId')

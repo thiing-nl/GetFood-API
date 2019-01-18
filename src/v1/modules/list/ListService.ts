@@ -70,14 +70,15 @@ export class ListService {
   }
 
   public async create(
-    list: ListCreateUpdate,
+    listCreateUpdate: ListCreateUpdate,
     user: User
   ): Promise<List> {
     await this.familyService.hasFamily(user, true);
     const family = await this.familyService.getActiveFamilyForUser(user);
 
     const newList = new this.listModel();
-    newList.title = list.title;
+    newList.title = listCreateUpdate.title;
+    newList.color = listCreateUpdate.color;
     newList.family = family;
     newList.createdBy = user;
 
@@ -151,6 +152,7 @@ export class ListService {
     }
 
     list.title = listCreateUpdate.title;
+    list.color = listCreateUpdate.color;
 
     await list.save();
 
