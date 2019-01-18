@@ -31,7 +31,7 @@ export class UserController {
   @Summary('Registers a new user')
   public async register(
     @BodyParams() user: UserCreateUpdateModel
-  ) {
+  ): Promise<User> {
     return await this.userService.create(user);
   }
 

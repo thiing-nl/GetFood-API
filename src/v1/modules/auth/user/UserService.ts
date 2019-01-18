@@ -53,7 +53,7 @@ export class UserService {
    * Create User
    * @param createUser
    */
-  public async create(createUser: UserCreateUpdateModel) {
+  public async create(createUser: UserCreateUpdateModel): Promise<User> {
     if ( !_.isNil(await this.findByEmail(createUser.email)) ) {
       throw new BadRequest('User with this username already exists.');
     }
@@ -66,7 +66,10 @@ export class UserService {
     user.token = User.generateToken();
     await user.save();
 
-    return user;
+    return {
+      ...user.toJSON(),
+      token: user.token
+    } as User;
   }
 
   public async authenticate({ email, password }) {
