@@ -147,26 +147,6 @@ export class FamilyService {
   }
 
   /**
-   * Get a family by id
-   * @param user
-   */
-  public async generateQrcode(user: User): Promise<string> {
-    await this.hasFamily(user, true);
-
-    const family = await this.familyModel
-      .findOne({
-        users: user._id
-      })
-      .lean();
-
-    if ( _.isNil(family) ) {
-      throw new NotFound('Family not found.');
-    }
-
-    return await QRCode.toDataURL(`getfood:family:${family._id}`);
-  }
-
-  /**
    * Leave active family
    * @param {User} user
    */
