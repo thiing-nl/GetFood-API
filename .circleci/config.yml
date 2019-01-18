@@ -1,0 +1,59 @@
+version: 2
+jobs:
+  build-job:
+    docker:
+      - image: node:8.9.3
+    working_directory: ~/GetFood-API
+    steps:
+      - checkout
+      - run:
+          name: "Checking Versions"
+          command: |
+            node --version
+            yarn --version
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - v1-yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+      - run:
+          name: Install Dependencies
+          command: yarn install
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: v1-yarn-packages-{{ .Branch }}-{{ checksum "yarn.lock" }}
+          paths:
+            - node_modules/
+      - run:
+          name: Test Build Production fails
+          command: 'yarn run tsc'
+
+  deploy-job:
+    docker:
+      - image: node:8.9.3
+    working_directory: ~/GetFood-API
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "ea:f4:61:de:76:bc:74:87:c6:86:14:06:94:03:44:ca"
+      - run:
+          name: Add domain to known host.
+          command: "echo 'api.getfood.io,68.183.6.199 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGpQsi0Oty+1uhH31QnbqzD+t56ou9/w/TQm7r9VREBuPPDB7CWc3DeX0YjFdhbG5HPx9NKmRV8DbIlrLWNgvYM=' >> ~/.ssh/known_hosts"
+      - run:
+          name: Run Listing of Working Directory
+          command: ls
+      - run:
+          name: Run deploy script
+          command: sh .circleci/deploy.sh
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build-job
+      - deploy-job:
+          requires:
+            - build-job
+          filters:
+            branches:
+              only: master
