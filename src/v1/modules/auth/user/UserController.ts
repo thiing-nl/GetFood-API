@@ -1,7 +1,5 @@
 import { Authenticated, BodyParams, Controller, Delete, Get, Post, Property, Put, Req, Required } from '@tsed/common';
 import { Docs, Example, Returns, Security, Summary } from '@tsed/swagger';
-import { GetFoodApiException } from '../../../../core/VersionController';
-import { Family } from '../../family/Family';
 import { UserRequest } from '../AuthMiddleware';
 import { User } from './User';
 import { UserCreateUpdateModel } from './UserCreateUpdateModel';
