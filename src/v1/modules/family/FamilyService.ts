@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { NotFound, Forbidden } from 'ts-httpexceptions';
 import { User } from '../auth/user/User';
 import { Family } from './Family';
-import { FamilyCreateUpdate } from './models/FamilyCreateUpdate';
+import { FamilyCreateUpdate } from './FamilyCreateUpdate';
 
 const QRCode = require('qrcode');
 

@@ -1,5 +1,6 @@
 import { Inject, Service } from '@tsed/common';
 import { MongooseModel } from '@tsed/mongoose';
+import * as emailValidator from 'email-validator';
 import * as _ from 'lodash';
 import { Document } from 'mongoose';
 import { BadRequest, Forbidden, NotFound } from 'ts-httpexceptions';
@@ -16,6 +17,10 @@ export class UserService {
     @Inject(User) private userModel: MongooseModel<IUser>
   ) {
     UserService.staticUserModel = userModel;
+  }
+
+  public static findByToken(userTokenHeader: string) {
+    return UserService.staticUserModel.findOne({ token: userTokenHeader });
   }
 
   /**
@@ -42,7 +47,7 @@ export class UserService {
   public async get(userId: string): Promise<User> {
     const user = await this.userModel.findOne({ _id: userId });
 
-    if (_.isNil(user)) {
+    if ( _.isNil(user) ) {
       throw new NotFound('Cannot get user.');
     }
 
@@ -51,18 +56,22 @@ export class UserService {
 
   /**
    * Create User
-   * @param createUser
+   * @param userCreateUpdateModel
    */
-  public async create(createUser: UserCreateUpdateModel): Promise<User> {
-    if ( !_.isNil(await this.findByEmail(createUser.email)) ) {
+  public async create(userCreateUpdateModel: UserCreateUpdateModel): Promise<User> {
+    if ( !_.isNil(await this.findByEmail(userCreateUpdateModel.email)) ) {
       throw new BadRequest('User with this email already exists.');
     }
 
+    if ( !emailValidator.validate(userCreateUpdateModel.email) ) {
+      throw new BadRequest('Not a valid email!');
+    }
+
     const user = new this.userModel();
-    user.firstName = createUser.firstName;
-    user.lastName = createUser.lastName;
-    user.password = createUser.password;
-    user.email = createUser.email;
+    user.firstName = userCreateUpdateModel.firstName;
+    user.lastName = userCreateUpdateModel.lastName;
+    user.password = userCreateUpdateModel.password;
+    user.email = userCreateUpdateModel.email;
     user.token = User.generateToken();
     await user.save();
 
@@ -73,6 +82,10 @@ export class UserService {
   }
 
   public async authenticate({ email, password }) {
+    if ( !emailValidator.validate(email) ) {
+      throw new BadRequest('Not a valid email!');
+    }
+
     const user = await this.findByEmail(email);
 
     if ( _.isNull(user) ) {
@@ -92,18 +105,18 @@ export class UserService {
     }
   }
 
-  public static findByToken(userTokenHeader: string) {
-    return UserService.staticUserModel.findOne({ token: userTokenHeader });
-  }
-
   public async update(
     userCreateUpdateModel: UserCreateUpdateModel,
     user: User
   ) {
     const currentUser: IUser & Document = await this.userModel.findOne({ _id: user._id });
 
-    if (_.isNil(currentUser)) {
+    if ( _.isNil(currentUser) ) {
       throw new NotFound('Cannot get user.');
+    }
+
+    if ( !emailValidator.validate(userCreateUpdateModel.email) ) {
+      throw new BadRequest('Not a valid email!');
     }
 
     currentUser.firstName = userCreateUpdateModel.firstName;
@@ -118,7 +131,7 @@ export class UserService {
   public async delete(user: User) {
     const currentUser: IUser & Document = await this.userModel.findOne({ _id: user._id });
 
-    if (_.isNil(currentUser)) {
+    if ( _.isNil(currentUser) ) {
       throw new NotFound('Cannot get user.');
     }
 

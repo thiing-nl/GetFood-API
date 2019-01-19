@@ -3,7 +3,7 @@ import { Docs, Returns, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../auth/AuthMiddleware';
 import { Family } from './Family';
 import { FamilyService } from './FamilyService';
-import { FamilyCreateUpdate } from './models/FamilyCreateUpdate';
+import { FamilyCreateUpdate } from './FamilyCreateUpdate';
 
 @Docs('api-v1')
 @Controller('/family')
