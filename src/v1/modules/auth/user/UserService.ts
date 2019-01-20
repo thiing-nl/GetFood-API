@@ -4,10 +4,18 @@ import * as emailValidator from 'email-validator';
 import * as _ from 'lodash';
 import { Document } from 'mongoose';
 import { BadRequest, Forbidden, NotFound } from 'ts-httpexceptions';
+import { UserCreateModel } from './models/UserCreateModel';
 import { UserUpdateModel } from './models/UserUpdateModel';
 import { User } from './User';
-import { UserCreateModel } from './models/UserCreateModel';
 import { IUser } from './UserInterface';
+import { $log } from 'ts-log-debug';
+require('dotenv').config();
+
+let slack = null;)
+if ( !_.isNil(process.env[ 'SLACK_WEBHOOK_URL' ]) && _.isString(process.env[ 'SLACK_WEBHOOK_URL' ]) ) {
+  slack = require('slack-notify')(process.env[ 'SLACK_WEBHOOK_URL' ]);
+  $log.info('Enabled slack notifications!');
+}
 
 @Service()
 export class UserService {
@@ -75,6 +83,28 @@ export class UserService {
     user.email = userCreateUpdateModel.email;
     user.token = User.generateToken();
     await user.save();
+
+    if ( slack != null ) {
+      slack.alert({
+        channel: '#getfood-api',
+        text: 'New user alert!',
+        attachments: [
+          {
+            fallback: `User: ${user.firstName} ${user.lastName} - ${user.email}`,
+            fields: [
+              { title: 'Name', value: `${user.firstName} ${user.lastName}`, short: false },
+              { title: 'Email', value: user.email, short: false }
+            ]
+          }
+        ]
+      }, function (err) {
+        if (err) {
+          console.log('API error:', err);
+        } else {
+          console.log('Message received!');
+        }
+      });
+    }
 
     return {
       ...user.toJSON(),
