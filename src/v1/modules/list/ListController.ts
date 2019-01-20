@@ -1,7 +1,7 @@
 import { Authenticated, BodyParams, Controller, Delete, Get, PathParams, Post, Put, Req } from '@tsed/common';
 import { Docs, Returns, ReturnsArray, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../auth/AuthMiddleware';
-import { List } from './List';
+import { List, ListModel } from './List';
 import { ListItemController } from './list-item/ListItemController';
 import { ListService } from './ListService';
 import { LIST_COLORS, ListColor } from './models/ListColors';
@@ -18,7 +18,7 @@ export class ListController {
 
   @Post('/')
   @Summary('Create a new list')
-  @Returns(200, { type: List })
+  @Returns(200, { type: ListModel })
   @Authenticated()
   @Security('token')
   public async create(
@@ -30,7 +30,7 @@ export class ListController {
 
   @Get('/')
   @Summary('Receives the lists the current user has access to')
-  @ReturnsArray(200, { type: List })
+  @ReturnsArray(200, { type: ListModel })
   @Authenticated()
   @Security('token')
   public async getLists(
@@ -41,7 +41,7 @@ export class ListController {
 
   @Get('/colors')
   @Summary('Receives the available colors for the list')
-  @ReturnsArray(200, { type: ListColor })
+  @ReturnsArray(200, { type: ListModel })
   @Authenticated()
   @Security('token')
   public async getColors(
@@ -52,7 +52,7 @@ export class ListController {
 
   @Get('/:listId')
   @Summary('Get a list')
-  @Returns(200, { type: List })
+  @Returns(200, { type: ListModel })
   @Authenticated()
   @Security('token')
   public async get(
@@ -64,7 +64,7 @@ export class ListController {
 
   @Put('/:listId')
   @Summary('Update a list')
-  @Returns(200, { type: List })
+  @Returns(200, { type: ListModel })
   @Authenticated()
   @Security('token')
   public async update(
@@ -77,7 +77,7 @@ export class ListController {
 
   @Delete('/:listId')
   @Summary('Deletes a list')
-  @Returns(200, { type: List })
+  @Returns(200, { type: ListModel })
   @Authenticated()
   @Security('token')
   public async delete(

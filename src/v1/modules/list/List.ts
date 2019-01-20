@@ -6,7 +6,6 @@ import { Family } from '../family/Family';
 import { ListItem } from './list-item/ListItem';
 import { LIST_COLORS_STRINGS } from './models/ListColors';
 
-
 @Model()
 export class List {
 
@@ -59,5 +58,11 @@ export class List {
       items: this.items,
       family: this.family
     } as List;
+  }
+}
+
+export class ListModel extends List {
+  constructor() {
+    super();
   }
 }
