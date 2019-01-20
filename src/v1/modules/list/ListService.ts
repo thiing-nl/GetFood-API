@@ -1,5 +1,6 @@
 import { Inject, Service } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
+import { Document } from 'mongoose';
 import * as _ from 'lodash';
 import { Forbidden, NotFound } from 'ts-httpexceptions';
 import { User } from '../auth/user/User';
@@ -19,6 +20,7 @@ export class ListService {
     private familyService: FamilyService,
     private userService: UserService
   ) {
+    this.check();
   }
 
   public async find(listId: string) {
@@ -156,5 +158,16 @@ export class ListService {
     await list.save();
 
     return this.get(list._id);
+  }
+
+  private async check() {
+    const lists: (List & Document)[] = await this.listModel.find({ color: null });
+
+    return Promise.all(lists.map(async (list: List & Document) => {
+      list.color = LIST_COLORS_STRINGS[ Math.floor(Math.random() * LIST_COLORS_STRINGS.length) ];
+      await list.save();
+
+      return list;
+    }));
   }
 }
