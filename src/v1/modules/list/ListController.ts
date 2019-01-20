@@ -77,13 +77,13 @@ export class ListController {
 
   @Delete('/:listId')
   @Summary('Deletes a list')
-  @Returns(200, { type: ListModel })
+  @Returns(200, { type: Boolean })
   @Authenticated()
   @Security('token')
   public async delete(
     @PathParams('listId') listId: string,
     @Req() req: UserRequest
-  ): Promise<List> {
+  ): Promise<boolean> {
     return await this.listService.delete(listId, req.user);
   }
 

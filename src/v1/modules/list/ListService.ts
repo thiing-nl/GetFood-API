@@ -108,7 +108,7 @@ export class ListService {
   public async delete(
     listId: string,
     user: User
-  ): Promise<List> {
+  ): Promise<boolean> {
     await this.familyService.hasFamily(user, true);
 
     const family = await this.familyService.getActiveFamilyForUser(user);
@@ -131,7 +131,7 @@ export class ListService {
 
     await list.remove();
 
-    return list;
+    return true;
   }
 
   public async update(
