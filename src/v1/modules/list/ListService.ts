@@ -6,6 +6,7 @@ import { User } from '../auth/user/User';
 import { UserService } from '../auth/user/UserService';
 import { FamilyService } from '../family/FamilyService';
 import { List } from './List';
+import { LIST_COLORS_STRINGS } from './models/ListColors';
 import { ListCreateUpdate } from './models/ListCreateUpdate';
 
 
@@ -78,7 +79,7 @@ export class ListService {
 
     const newList = new this.listModel();
     newList.title = listCreateUpdate.title;
-    newList.color = listCreateUpdate.color;
+    newList.color = LIST_COLORS_STRINGS[ Math.floor(Math.random() * LIST_COLORS_STRINGS.length) ];
     newList.family = family;
     newList.createdBy = user;
 
@@ -152,8 +153,6 @@ export class ListService {
     }
 
     list.title = listCreateUpdate.title;
-    list.color = listCreateUpdate.color;
-
     await list.save();
 
     return this.get(list._id);
