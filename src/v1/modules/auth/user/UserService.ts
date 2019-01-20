@@ -11,7 +11,7 @@ import { IUser } from './UserInterface';
 import { $log } from 'ts-log-debug';
 require('dotenv').config();
 
-let slack = null;)
+let slack = null;
 if ( !_.isNil(process.env[ 'SLACK_WEBHOOK_URL' ]) && _.isString(process.env[ 'SLACK_WEBHOOK_URL' ]) ) {
   slack = require('slack-notify')(process.env[ 'SLACK_WEBHOOK_URL' ]);
   $log.info('Enabled slack notifications!');
