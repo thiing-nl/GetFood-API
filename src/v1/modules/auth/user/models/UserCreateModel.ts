@@ -2,7 +2,7 @@ import { JsonProperty, Property, Required } from '@tsed/common';
 import { Example } from '@tsed/swagger';
 
 
-export class UserCreateUpdateModel {
+export class UserCreateModel {
   @Property()
   @Required()
   @Example('John')

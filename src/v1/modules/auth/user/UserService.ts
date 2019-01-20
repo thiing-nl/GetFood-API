@@ -4,8 +4,9 @@ import * as emailValidator from 'email-validator';
 import * as _ from 'lodash';
 import { Document } from 'mongoose';
 import { BadRequest, Forbidden, NotFound } from 'ts-httpexceptions';
+import { UserUpdateModel } from './models/UserUpdateModel';
 import { User } from './User';
-import { UserCreateUpdateModel } from './UserCreateUpdateModel';
+import { UserCreateModel } from './models/UserCreateModel';
 import { IUser } from './UserInterface';
 
 @Service()
@@ -58,7 +59,7 @@ export class UserService {
    * Create User
    * @param userCreateUpdateModel
    */
-  public async create(userCreateUpdateModel: UserCreateUpdateModel): Promise<User> {
+  public async create(userCreateUpdateModel: UserCreateModel): Promise<User> {
     if ( !_.isNil(await this.findByEmail(userCreateUpdateModel.email)) ) {
       throw new BadRequest('User with this email already exists.');
     }
@@ -106,7 +107,7 @@ export class UserService {
   }
 
   public async update(
-    userCreateUpdateModel: UserCreateUpdateModel,
+    userCreateUpdateModel: UserUpdateModel,
     user: User
   ) {
     const currentUser: IUser & Document = await this.userModel.findOne({ _id: user._id });
@@ -121,7 +122,12 @@ export class UserService {
 
     currentUser.firstName = userCreateUpdateModel.firstName;
     currentUser.lastName = userCreateUpdateModel.lastName;
-    currentUser.password = userCreateUpdateModel.password;
+    if (
+      !_.isNil(userCreateUpdateModel.password) &&
+      userCreateUpdateModel.password.trim() !== ''
+    ) {
+      currentUser.password = userCreateUpdateModel.password;
+    }
     currentUser.email = userCreateUpdateModel.email;
     await currentUser.save();
 

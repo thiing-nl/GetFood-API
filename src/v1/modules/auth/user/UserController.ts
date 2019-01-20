@@ -1,8 +1,9 @@
 import { Authenticated, BodyParams, Controller, Delete, Get, Post, Property, Put, Req, Required } from '@tsed/common';
 import { Docs, Example, Returns, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../AuthMiddleware';
+import { UserUpdateModel } from './models/UserUpdateModel';
 import { User } from './User';
-import { UserCreateUpdateModel } from './UserCreateUpdateModel';
+import { UserCreateModel } from './models/UserCreateModel';
 import { UserService } from './UserService';
 
 class UserAuthenticationRequest {
@@ -29,7 +30,7 @@ export class UserController {
   @Returns(200, { type: User })
   @Summary('Registers a new user')
   public async register(
-    @BodyParams() user: UserCreateUpdateModel
+    @BodyParams() user: UserCreateModel
   ): Promise<User> {
     return await this.userService.create(user);
   }
@@ -60,10 +61,10 @@ export class UserController {
   @Authenticated()
   @Security('token')
   public async update(
-    @BodyParams() userCreateUpdateModel: UserCreateUpdateModel,
+    @BodyParams() userUpdateModel: UserUpdateModel,
     @Req() req: UserRequest
   ) {
-    return await this.userService.update(userCreateUpdateModel, req.user);
+    return await this.userService.update(userUpdateModel, req.user);
   }
 
   @Delete('/')
