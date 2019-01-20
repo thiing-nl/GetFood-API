@@ -77,11 +77,15 @@ export class User {
     firstName: string,
     lastName: string
   ): string {
-    const splitFirstName = firstName.split(' ')
-      .map((firstNameItem) => firstNameItem.toUpperCase()[ 0 ]);
+    let splitFirstName = firstName.split(' ')
+      .reverse();
     let splitLastName = lastName.split(' ')
       .reverse();
 
+    if ( splitFirstName.length > 0 ) {
+      splitFirstName.length = 1;
+      splitFirstName = splitLastName.map((lastNameItem) => lastNameItem.toUpperCase()[ 0 ]);
+    }
     if ( splitLastName.length > 0 ) {
       splitLastName.length = 1;
       splitLastName = splitLastName.map((lastNameItem) => lastNameItem.toUpperCase()[ 0 ]);
