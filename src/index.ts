@@ -18,7 +18,7 @@ new Server()
   .then(() => {
     if ( slack != null ) {
       slack.note({
-        channel: '#getfood-api',
+        channel: process.env[ 'CHANNEL' ] || '#getfood-api',
         text: `Reboot! (${ process.env[ 'ENV' ] || 'production'})`
       }, function (err) {
         if (err) {

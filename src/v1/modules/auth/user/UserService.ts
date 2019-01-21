@@ -88,7 +88,7 @@ export class UserService {
 
     if ( slack != null ) {
       slack.alert({
-        channel: '#getfood-api',
+        channel: process.env[ 'CHANNEL' ] || '#getfood-api',
         text: `New user alert! (${ process.env[ 'ENV' ] || 'production'})`,
         attachments: [
           {
