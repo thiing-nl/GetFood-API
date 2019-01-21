@@ -11,7 +11,7 @@ export class VersionController {
     return [
       {
         version: 'v1',
-        docs: 'https://api.getfood.io/api-docs',
+        docs: process.env['ENV'] === 'development' ? 'http://localhost:8080/api-docs' : 'https://api.getfood.io/api-docs',
         prefix: '/v1/'
       }
     ];

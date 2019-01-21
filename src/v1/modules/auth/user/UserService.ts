@@ -4,20 +4,13 @@ import * as emailValidator from 'email-validator';
 import * as _ from 'lodash';
 import { Document } from 'mongoose';
 import { BadRequest, Forbidden, NotFound } from 'ts-httpexceptions';
+import { slack } from '../../../../core/Slack';
 import { UserCreateModel } from './models/UserCreateModel';
 import { UserUpdateModel } from './models/UserUpdateModel';
 import { User } from './User';
 import { IUser } from './UserInterface';
 import { $log } from 'ts-log-debug';
 require('dotenv').config();
-
-let slack = null;
-if ( !_.isNil(process.env[ 'SLACK_WEBHOOK_URL' ]) && _.isString(process.env[ 'SLACK_WEBHOOK_URL' ]) ) {
-  slack = require('slack-notify')(process.env[ 'SLACK_WEBHOOK_URL' ]);
-  $log.info('Enabled slack notifications!');
-} else {
-  $log.info('Disabled slack notifications!');
-}
 
 @Service()
 export class UserService {
@@ -106,6 +99,8 @@ export class UserService {
           console.log('Message received!');
         }
       });
+    } else {
+      $log.info('Slack not enabled.');
     }
 
     return {

@@ -1,16 +1,9 @@
 import * as _ from 'lodash';
 import { $log } from 'ts-log-debug';
+import { slack } from './core/Slack';
 import { Server } from './Server';
 
 require('dotenv').config();
-
-let slack = null;
-if ( !_.isNil(process.env[ 'SLACK_WEBHOOK_URL' ]) && _.isString(process.env[ 'SLACK_WEBHOOK_URL' ]) ) {
-  slack = require('slack-notify')(process.env[ 'SLACK_WEBHOOK_URL' ]);
-  $log.info('Enabled slack notifications!');
-} else {
-  $log.info('Disabled slack notifications!');
-}
 
 $log.debug('Start server...');
 new Server()
@@ -27,6 +20,8 @@ new Server()
           console.log('Message received!');
         }
       });
+    } else {
+      $log.info('Slack not enabled.');
     }
   })
   .catch((er) => console.error(er));

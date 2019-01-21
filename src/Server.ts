@@ -3,6 +3,7 @@ import '@tsed/mongoose';
 import '@tsed/swagger';
 import './v1/modules/auth/AuthMiddleware';
 import GlobalErrorHandlerMiddleware from './v1/modules/auth/ErrorMiddleware';
+
 require('dotenv').config();
 
 @ServerSettings({
@@ -99,6 +100,10 @@ export class Server extends ServerLoader {
 
   $afterRoutesInit() {
     this
-      .use(GlobalErrorHandlerMiddleware);
+      .use(GlobalErrorHandlerMiddleware)
+      .use((
+        req,
+        res
+      ) => res.status(404).json({ err: true, message: 'Not Found' }));
   }
 }
