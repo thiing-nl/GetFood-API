@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Mocha Tests" time="0.003" tests="2" failures="0">
+  <testsuite name="Root Suite" timestamp="2019-01-21T21:03:52" tests="0" failures="0" time="0">
+  </testsuite>
+  <testsuite name="UserService" timestamp="2019-01-21T21:03:52" tests="2" file="/Users/bvvliet/dev/GetFood-API/test/integration/controllers/UserService.spec.ts" failures="0" time="0.003">
+    <testcase name="UserService should not get user that doesnt exist" time="0.002" classname="should not get user that doesnt exist">
+    </testcase>
+    <testcase name="UserService should create user" time="0.001" classname="should create user">
+    </testcase>
+  </testsuite>
+</testsuites>

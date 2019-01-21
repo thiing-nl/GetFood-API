@@ -25,6 +25,11 @@ jobs:
             - node_modules/
       - run:
           name: Test Build Production fails
+          command: 'yarn run test'
+      - store_test_results:
+          path: test-results
+      - run:
+          name: Test Build Production fails
           command: 'yarn run tsc'
 
   deploy-job:
