@@ -15,6 +15,8 @@ let slack = null;
 if ( !_.isNil(process.env[ 'SLACK_WEBHOOK_URL' ]) && _.isString(process.env[ 'SLACK_WEBHOOK_URL' ]) ) {
   slack = require('slack-notify')(process.env[ 'SLACK_WEBHOOK_URL' ]);
   $log.info('Enabled slack notifications!');
+} else {
+  $log.info('Disabled slack notifications!');
 }
 
 @Service()
@@ -87,7 +89,7 @@ export class UserService {
     if ( slack != null ) {
       slack.alert({
         channel: '#getfood-api',
-        text: 'New user alert!',
+        text: `New user alert! (${ process.env[ 'ENV' ] || 'production'})`,
         attachments: [
           {
             fallback: `User: ${user.firstName} ${user.lastName} - ${user.email}`,

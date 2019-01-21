@@ -3,9 +3,7 @@ import '@tsed/mongoose';
 import '@tsed/swagger';
 import './v1/modules/auth/AuthMiddleware';
 import GlobalErrorHandlerMiddleware from './v1/modules/auth/ErrorMiddleware';
-
 require('dotenv').config();
-
 
 @ServerSettings({
   rootDir: __dirname,
