@@ -7,7 +7,7 @@ import { ListService } from './ListService';
 import { LIST_COLORS, ListColor } from './models/ListColors';
 import { ListCreateUpdate } from './models/ListCreateUpdate';
 
-@Docs('api-v1')
+@Docs('api-v2')
 @Controller('/list', ListItemController)
 export class ListController {
 

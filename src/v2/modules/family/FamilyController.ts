@@ -5,7 +5,7 @@ import { Family } from './Family';
 import { FamilyService } from './FamilyService';
 import { FamilyCreateUpdate } from './FamilyCreateUpdate';
 
-@Docs('api-v1')
+@Docs('api-v2')
 @Controller('/family')
 export class FamilyController {
 

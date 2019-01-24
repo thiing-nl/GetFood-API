@@ -1,8 +1,8 @@
 import { GlobalAcceptMimesMiddleware, ServerLoader, ServerSettings } from '@tsed/common';
 import '@tsed/mongoose';
 import '@tsed/swagger';
-import './v1/modules/auth/AuthMiddleware';
-import GlobalErrorHandlerMiddleware from './v1/modules/auth/ErrorMiddleware';
+import './v2/modules/auth/AuthMiddleware';
+import GlobalErrorHandlerMiddleware from './v2/modules/auth/ErrorMiddleware';
 
 require('dotenv').config();
 
@@ -11,7 +11,7 @@ require('dotenv').config();
   acceptMimes: [ 'application/json' ],
   passport: {},
   mount: {
-    '/v1': `${__dirname}/v1/modules/**/**Controller.js`,
+    '/v2': `${__dirname}/v2/modules/**/**Controller.js`,
     '/': `${__dirname}/core/**/**Controller.js`
   },
   mongoose: {
@@ -20,7 +20,7 @@ require('dotenv').config();
   swagger: [
     {
       path: '/api-docs',
-      doc: 'api-v1',
+      doc: 'api-v2',
       spec: {
         info: {},
         securityDefinitions: {

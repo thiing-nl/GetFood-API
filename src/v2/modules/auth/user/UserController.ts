@@ -18,7 +18,7 @@ class UserAuthenticationRequest {
   password: string;
 }
 
-@Docs('api-v1')
+@Docs('api-v2')
 @Controller('/user')
 export class UserController {
   constructor(

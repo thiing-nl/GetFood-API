@@ -37,6 +37,10 @@ typings/
 # Typescript
 src/**/*.js
 src/**/*.js.map
+src/*.js
+src/*.js.map
+src/v2/**/*.js
+src/v2/**/*.js.map
 test/**/*.js
 test/**/*.js.map
 

@@ -2,10 +2,10 @@ import { inject, TestContext } from '@tsed/testing';
 import { expect } from 'chai';
 import * as mongoose from 'mongoose';
 import { NotFound } from 'ts-httpexceptions';
-import { UserCreateModel } from '../../../src/v1/modules/auth/user/models/UserCreateModel';
-import { User } from '../../../src/v1/modules/auth/user/User';
-import { IUser } from '../../../src/v1/modules/auth/user/UserInterface';
-import { UserService } from '../../../src/v1/modules/auth/user/UserService';
+import { UserCreateModel } from '../../../src/v2/modules/auth/user/models/UserCreateModel';
+import { User } from '../../../src/v2/modules/auth/user/User';
+import { IUser } from '../../../src/v2/modules/auth/user/UserInterface';
+import { UserService } from '../../../src/v2/modules/auth/user/UserService';
 import { assert } from '../../tools';
 
 describe('UserService', () => {
