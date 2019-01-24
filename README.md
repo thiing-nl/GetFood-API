@@ -1,6 +1,6 @@
 # GetFood API
 
-Make sure you have MongoDB installed.
+Make sure you have [MongoDB](https://docs.mongodb.com/manual/installation/#tutorials) installed.
 
 You can modify the MONGOOSE_URL in the .env file (if it doens't exist create it by copying .env.example)
 
