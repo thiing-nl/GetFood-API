@@ -43,7 +43,7 @@ jobs:
             - "ea:f4:61:de:76:bc:74:87:c6:86:14:06:94:03:44:ca"
       - run:
           name: Add domain to known host.
-          command: "echo 'api.getfood.io,68.183.6.199 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGpQsi0Oty+1uhH31QnbqzD+t56ou9/w/TQm7r9VREBuPPDB7CWc3DeX0YjFdhbG5HPx9NKmRV8DbIlrLWNgvYM=' >> ~/.ssh/known_hosts"
+          command: "echo 'api-v2.getfood.io,68.183.9.83 ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEMI0eP4NRMNrDEgvAzxXuKnIksd8YysvmGfE1QrHQ1W00vL1XCKgAfW3C0H7LpQKcrUs0tW7gdLqbZZq/LYLNA=' >> ~/.ssh/known_hosts"
       - run:
           name: Run Listing of Working Directory
           command: ls
@@ -61,4 +61,4 @@ workflows:
             - build-job
           filters:
             branches:
-              only: master
+              only: deploy
