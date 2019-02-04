@@ -25,7 +25,7 @@ jobs:
             - node_modules/
       - run:
           name: Test Build Production fails
-          command: 'yarn run test'
+          command: 'yarn run test:coverage'
       - store_test_results:
           path: test-results
       - run:

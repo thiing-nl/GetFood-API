@@ -1,12 +1,13 @@
 import { Authenticated, BodyParams, Controller, Delete, Get, PathParams, Post, Put, Req } from '@tsed/common';
-import { Docs, Returns, Security, Summary } from '@tsed/swagger';
+import { Docs, Returns, ReturnsArray, Security, Summary } from '@tsed/swagger';
 import { UserRequest } from '../auth/AuthMiddleware';
 import { Family } from './Family';
+import { FamilyListController } from './family-list/FamilyListController';
 import { FamilyService } from './FamilyService';
 import { FamilyCreateUpdate } from './FamilyCreateUpdate';
 
 @Docs('api-v2')
-@Controller('/family')
+@Controller('/family', FamilyListController)
 export class FamilyController {
 
   constructor(
@@ -27,37 +28,39 @@ export class FamilyController {
   }
 
   @Get('/')
-  @Summary('Receives active family')
-  @Returns(200, { type: Family })
+  @Summary('Receives the families the user is in')
+  @ReturnsArray(200, { type: Family })
   @Authenticated()
   @Security('token')
-  public async getActiveFamily(
+  public async getActiveFamilies(
     @Req() req: UserRequest
-  ): Promise<Family> {
-    return await this.familyService.mapActiveFamilyForUser(req.user);
+  ): Promise<Family[]> {
+    return await this.familyService.getActiveMappedFamiliesForUser(req.user);
   }
 
-  @Put('/')
+  @Put('/:familyId')
   @Summary('Update active family')
   @Returns(200, { type: Family })
   @Authenticated()
   @Security('token')
   public async update(
-    @BodyParams() family: FamilyCreateUpdate,
+    @PathParams('familyId') familyId: string,
+    @BodyParams() familyCreateUpdate: FamilyCreateUpdate,
     @Req() req: UserRequest
   ): Promise<Family> {
-    return await this.familyService.update(family, req.user);
+    return await this.familyService.update(familyId, familyCreateUpdate, req.user);
   }
 
-  @Delete('/')
+  @Delete('/:familyId')
   @Summary('Leaves active family')
   @Returns(200, { type: Family })
   @Authenticated()
   @Security('token')
   public async leaveActiveFamily(
+    @PathParams('familyId') familyId: string,
     @Req() req: UserRequest
   ): Promise<Family> {
-    return await this.familyService.leave(req.user);
+    return await this.familyService.leave(familyId, req.user);
   }
 
   @Post('/:familyId/join')

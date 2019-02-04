@@ -1,0 +1,7 @@
+
+
+export enum ACTIVITY_TYPES {
+  TEAM = 'TEAM',
+  TEAM_USER_JOIN = 'TEAM_USER_JOIN',
+  LIST = 'LIST'
+}

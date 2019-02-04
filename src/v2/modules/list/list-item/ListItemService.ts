@@ -21,22 +21,6 @@ export class ListItemService {
   ) {
   }
 
-  public async getItems(
-    listId: any,
-    user: User
-  ): Promise<ListItem[]> {
-    await this.familyService.hasFamily(user, true);
-    const family = await this.familyService.getActiveFamilyForUser(user);
-
-    const list = await this.listService.find(listId);
-
-    if ( family._id.toString() !== (list.family as Family)._id.toString() ) {
-      throw new Forbidden('Cannot get items for list that is not in your active family.');
-    }
-
-    return list.items as ListItem[] || [];
-  }
-
   public async create(
     listId: string,
     listItemCreateUpdate: ListItemCreateUpdate,

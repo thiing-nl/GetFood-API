@@ -4,12 +4,13 @@ import * as emailValidator from 'email-validator';
 import * as _ from 'lodash';
 import { Document } from 'mongoose';
 import { BadRequest, Forbidden, NotFound } from 'ts-httpexceptions';
+import { $log } from 'ts-log-debug';
 import { slack } from '../../../../core/Slack';
 import { UserCreateModel } from './models/UserCreateModel';
 import { UserUpdateModel } from './models/UserUpdateModel';
 import { User } from './User';
 import { IUser } from './UserInterface';
-import { $log } from 'ts-log-debug';
+
 require('dotenv').config();
 
 @Service()
@@ -25,15 +26,6 @@ export class UserService {
 
   public static findByToken(userTokenHeader: string) {
     return UserService.staticUserModel.findOne({ token: userTokenHeader });
-  }
-
-  /**
-   * Find a user by his ID.
-   * @param _id
-   * @returns {undefined|User}
-   */
-  async find(_id: string): Promise<undefined | IUser & Document> {
-    return this.userModel.findOne({ _id });
   }
 
   /**
@@ -60,29 +52,33 @@ export class UserService {
 
   /**
    * Create User
-   * @param userCreateUpdateModel
+   * @param userCreateModel
+   * @param mapped
    */
-  public async create(userCreateUpdateModel: UserCreateModel): Promise<User> {
-    if ( !_.isNil(await this.findByEmail(userCreateUpdateModel.email)) ) {
+  public async create(
+    userCreateModel: UserCreateModel,
+    mapped = true
+  ): Promise<User> {
+    if ( !_.isNil(await this.findByEmail(userCreateModel.email)) ) {
       throw new BadRequest('User with this email already exists.');
     }
 
-    if ( !emailValidator.validate(userCreateUpdateModel.email) ) {
+    if ( !emailValidator.validate(userCreateModel.email) ) {
       throw new BadRequest('Not a valid email!');
     }
 
     const user = new this.userModel();
-    user.firstName = userCreateUpdateModel.firstName;
-    user.lastName = userCreateUpdateModel.lastName;
-    user.password = userCreateUpdateModel.password;
-    user.email = userCreateUpdateModel.email;
+    user.firstName = userCreateModel.firstName;
+    user.lastName = userCreateModel.lastName;
+    user.password = userCreateModel.password;
+    user.email = userCreateModel.email;
     user.token = User.generateToken();
     await user.save();
 
     if ( slack != null ) {
       slack.alert({
         channel: process.env[ 'CHANNEL' ] || '#getfood-api',
-        text: `New user alert! (${ process.env[ 'ENV' ] || 'production'})`,
+        text: `New user alert! (${process.env[ 'ENV' ] || 'production'})`,
         attachments: [
           {
             fallback: `User: ${user.firstName} ${user.lastName} - ${user.email}`,
@@ -93,7 +89,7 @@ export class UserService {
           }
         ]
       }, function (err) {
-        if (err) {
+        if ( err ) {
           console.log('API error:', err);
         } else {
           console.log('Message received!');
@@ -101,6 +97,10 @@ export class UserService {
       });
     } else {
       $log.info('Slack not enabled.');
+    }
+
+    if ( !mapped ) {
+      return user;
     }
 
     return {
@@ -134,29 +134,34 @@ export class UserService {
   }
 
   public async update(
-    userCreateUpdateModel: UserUpdateModel,
-    user: User
+    userId: string,
+    userUpdateModel: UserUpdateModel,
+    mapped = true
   ) {
-    const currentUser: IUser & Document = await this.userModel.findOne({ _id: user._id });
+    const currentUser: IUser & Document = await this.userModel.findOne({ _id: userId });
 
     if ( _.isNil(currentUser) ) {
       throw new NotFound('Cannot get user.');
     }
 
-    if ( !emailValidator.validate(userCreateUpdateModel.email) ) {
+    if ( !emailValidator.validate(userUpdateModel.email) ) {
       throw new BadRequest('Not a valid email!');
     }
 
-    currentUser.firstName = userCreateUpdateModel.firstName;
-    currentUser.lastName = userCreateUpdateModel.lastName;
+    currentUser.firstName = userUpdateModel.firstName;
+    currentUser.lastName = userUpdateModel.lastName;
     if (
-      !_.isNil(userCreateUpdateModel.password) &&
-      userCreateUpdateModel.password.trim() !== ''
+      !_.isNil(userUpdateModel.password) &&
+      userUpdateModel.password.trim() !== ''
     ) {
-      currentUser.password = userCreateUpdateModel.password;
+      currentUser.password = userUpdateModel.password;
     }
-    currentUser.email = userCreateUpdateModel.email;
+    currentUser.email = userUpdateModel.email;
     await currentUser.save();
+
+    if ( !mapped ) {
+      return currentUser;
+    }
 
     return currentUser.toJSON();
   }

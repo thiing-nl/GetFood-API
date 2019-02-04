@@ -1,12 +1,11 @@
 import { Inject, Service } from '@tsed/di';
 import { MongooseModel } from '@tsed/mongoose';
 import * as _ from 'lodash';
-import { NotFound, Forbidden } from 'ts-httpexceptions';
+import { Document } from 'mongoose';
+import { Forbidden, NotFound } from 'ts-httpexceptions';
 import { User } from '../auth/user/User';
 import { Family } from './Family';
 import { FamilyCreateUpdate } from './FamilyCreateUpdate';
-
-const QRCode = require('qrcode');
 
 @Service()
 export class FamilyService {
@@ -23,6 +22,7 @@ export class FamilyService {
 
   /**
    * Has family
+   *
    * @param {User} user
    * @param {boolean} throwError
    */
@@ -43,20 +43,35 @@ export class FamilyService {
   }
 
   /**
-   * Map Active Family
+   * Has user access to family
+   *
    * @param {User} user
-   * @returns {Promise<Family>}
+   * @param {string} familyId
    */
-  public async mapActiveFamilyForUser(
-    user: User
-  ): Promise<Family> {
-    const family = await this.getActiveFamilyForUser(user);
+  public async hasAccessToFamily(
+    user: User,
+    familyId: string
+  ) {
+    const family = await this.familyModel
+      .findOne({
+        _id: familyId
+      });
 
-    return this.mapFamily(family);
+    if ( _.isNil(family) ) {
+      throw new NotFound('Family not found.');
+    }
+
+    if ( family.users.indexOf(user._id) === -1 ) {
+      throw new Forbidden('User not in family.');
+    }
+
+    return !_.isNil(family) && family.users.indexOf(user._id) > -1;
   }
 
   /**
    * Get active family
+   *
+   * @deprecated use getActiveFamiliesForUser
    * @param {User} user
    * @returns {Promise<Family>}
    */
@@ -75,7 +90,45 @@ export class FamilyService {
   }
 
   /**
+   * Get active families
+   *
+   * @param {User} user
+   * @returns {Promise<Family[]>}
+   */
+  public async getActiveFamiliesForUser(
+    user: User
+  ) {
+    return this.familyModel
+      .find({
+        users: user._id
+      })
+      .populate('users')
+      .populate('createdBy')
+      .exec();
+  }
+
+  /**
+   * Get active families (mapped)
+   *
+   * @param {User} user
+   * @returns {Promise<Family[]>}
+   */
+  public async getActiveMappedFamiliesForUser(
+    user: User
+  ) {
+    const families = await this.familyModel
+      .find({
+        users: user._id
+      });
+
+    return Promise.all(
+      families.map(async ({ _id }) => this.get(_id))
+    );
+  }
+
+  /**
    * Create Family
+   *
    * @param {FamilyCreateUpdate} family
    * @param {User} user
    */
@@ -93,11 +146,12 @@ export class FamilyService {
     newFamily.users.push(user);
     await newFamily.save();
 
-    return this.get(newFamily._id);
+    return this.getMappedFamily(newFamily._id);
   }
 
   /**
    * Make user join a family
+   *
    * @param {string} familyId
    * @param {User} user
    */
@@ -123,14 +177,38 @@ export class FamilyService {
     family.users.push(user);
     await family.save();
 
-    return this.get(family._id);
+    return this.getMappedFamily(family._id);
   }
 
   /**
    * Get a family by id
+   *
    * @param familyId
    */
-  public async get(familyId: string) {
+  public async get(familyId: string): Promise<Family & Document> {
+    let family = await this.familyModel
+      .findOne({
+        _id: familyId
+      })
+      .populate('users')
+      .populate('createdBy')
+      .exec();
+
+    // TODO: Check access to family
+
+    if ( _.isNil(family) ) {
+      throw new NotFound('Family not found.');
+    }
+
+    return family;
+  }
+
+  /**
+   * Get a mapped family by id
+   *
+   * @param familyId
+   */
+  public async getMappedFamily(familyId: string) {
     let family = await this.familyModel
       .findOne({
         _id: familyId
@@ -148,16 +226,19 @@ export class FamilyService {
 
   /**
    * Leave active family
+   *
+   * @param {string} familyId
    * @param {User} user
    */
-  public async leave(user: User) {
-    if ( !await this.hasFamily(user) ) {
-      throw new NotFound('No active family.');
-    }
+  public async leave(
+    familyId: string,
+    user: User
+  ) {
+    await this.hasAccessToFamily(user, familyId);
 
     const family = await this.familyModel
       .findOne({
-        users: user._id
+        _id: familyId
       })
       .populate('users');
 
@@ -167,35 +248,40 @@ export class FamilyService {
 
     const foundUser = _.find(family.users, { _id: user._id });
     family.users.splice(family.users.indexOf(foundUser), 1);
-
     await family.save();
 
-    return this.get(family._id);
+    return this.getMappedFamily(family._id);
   }
 
+  /**
+   * Update the family
+   *
+   * @param familyId
+   * @param familyCreateUpdate
+   * @param user
+   */
   public async update(
-    family: FamilyCreateUpdate,
+    familyId: string,
+    familyCreateUpdate: FamilyCreateUpdate,
     user: User
   ) {
-    await this.hasFamily(user, true);
+    await this.hasAccessToFamily(user, familyId);
 
-    const activeFamily = await this.getActiveFamilyForUser(user);
+    const family = await this.get(familyId);
 
-    console.log(activeFamily);
-
-    if ( (activeFamily.createdBy as User)._id.toString() !== user._id.toString() ) {
+    if ( (family.createdBy as User)._id.toString() !== user._id.toString() ) {
       throw new Forbidden('Cannot update family that is not created by you.');
     }
 
-    activeFamily.name = family.name;
+    family.name = familyCreateUpdate.name;
+    await family.save();
 
-    await activeFamily.save();
-
-    return this.get(activeFamily._id);
+    return this.getMappedFamily(family._id);
   }
 
   /**
    * Maps the family
+   *
    * @param {Family} family
    */
   private mapFamily(family: Family) {
@@ -209,7 +295,7 @@ export class FamilyService {
 
     let createdBy;
     if ( !_.isNil(family.createdBy) && !_.isNil(family.createdBy[ 'toJSON' ]) ) {
-       createdBy = (family.createdBy as User).toJSON();
+      createdBy = (family.createdBy as User).toJSON();
     }
 
     family = (family as any).toJSON();

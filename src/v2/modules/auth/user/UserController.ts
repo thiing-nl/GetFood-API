@@ -64,7 +64,7 @@ export class UserController {
     @BodyParams() userUpdateModel: UserUpdateModel,
     @Req() req: UserRequest
   ) {
-    return await this.userService.update(userUpdateModel, req.user);
+    return await this.userService.update(req.user._id, userUpdateModel);
   }
 
   @Delete('/')

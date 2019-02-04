@@ -5,7 +5,7 @@ import { List, ListModel } from './List';
 import { ListItemController } from './list-item/ListItemController';
 import { ListService } from './ListService';
 import { LIST_COLORS, ListColor } from './models/ListColors';
-import { ListCreateUpdate } from './models/ListCreateUpdate';
+import { ListCreateModel } from './models/ListCreateModel';
 
 @Docs('api-v2')
 @Controller('/list', ListItemController)
@@ -22,7 +22,7 @@ export class ListController {
   @Authenticated()
   @Security('token')
   public async create(
-    @BodyParams() list: ListCreateUpdate,
+    @BodyParams() list: ListCreateModel,
     @Req() req: UserRequest
   ): Promise<List> {
     return await this.listService.create(list, req.user);
@@ -69,7 +69,7 @@ export class ListController {
   @Security('token')
   public async update(
     @PathParams('listId') listId: string,
-    @BodyParams() list: ListCreateUpdate,
+    @BodyParams() list: ListCreateModel,
     @Req() req: UserRequest
   ): Promise<List> {
     return await this.listService.update(listId, list, req.user);

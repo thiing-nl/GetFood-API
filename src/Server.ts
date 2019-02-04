@@ -42,13 +42,11 @@ export class Server extends ServerLoader {
    * @returns {Server}
    */
   $onMountingMiddlewares(): void | Promise<any> {
-
     const cookieParser = require('cookie-parser'),
       bodyParser = require('body-parser'),
       compress = require('compression'),
       methodOverride = require('method-override'),
       session = require('express-session');
-
 
     this
       .use(GlobalAcceptMimesMiddleware)

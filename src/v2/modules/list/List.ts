@@ -24,6 +24,7 @@ export class List {
   @Property()
   public createdDate: Date;
 
+  @Required()
   @Ref(User)
   public createdBy: Ref<User>;
 
