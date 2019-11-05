@@ -39,7 +39,7 @@
     "lodash": "^4.17.11",
     "method-override": "^2.3.10",
     "mocha-junit-reporter": "^1.18.0",
-    "mongoose": "5.3.7",
+    "mongoose": "5.7.5",
     "mongoose-bcrypt": "^1.6.0",
     "mongoose-unique-validator": "^2.0.2",
     "passport": "^0.4.0",
