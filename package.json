@@ -21,7 +21,7 @@
   "license": "MIT",
   "dependencies": {
     "@tsed/common": "^5.0.8",
-    "@tsed/core": "^5.0.8",
+    "@tsed/core": "^5.65.7",
     "@tsed/di": "^5.0.8",
     "@tsed/mongoose": "^5.0.8",
     "@tsed/swagger": "^5.0.8",
